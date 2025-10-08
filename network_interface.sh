@@ -4,7 +4,6 @@
 # Enhanced Network Interface Info Logger
 # ----------------------------------------
 
-# Log file
 LOG_FILE="$HOME/network_interface_log.csv"
 
 # Check dependencies
@@ -13,17 +12,21 @@ if ! command -v ip &>/dev/null; then
     exit 1
 fi
 
+# Optional tools for extra info
+IWCONFIG_AVAILABLE=$(command -v iwconfig >/dev/null && echo 1 || echo 0)
+ETHTOOL_AVAILABLE=$(command -v ethtool >/dev/null && echo 1 || echo 0)
+
 if [ ! -d /sys/class/net ]; then
-    echo "Error: /sys/class/net directory not found. System may not expose network interfaces this way."
+    echo "Error: /sys/class/net directory not found. System may not expose interfaces this way."
     exit 1
 fi
 
-# Create log file with headers if not exists or empty
+# Create log file with headers if missing or empty
 if [ ! -s "$LOG_FILE" ]; then
     echo "Date,Time,Interface,IP Address,MAC Address,Link Status,Speed(Mbps),MTU,RX Packets,TX Packets" > "$LOG_FILE"
 fi
 
-# Default interval (seconds)
+# Interval between logs (seconds)
 INTERVAL=${1:-10}
 
 echo "Starting continuous network logging every $INTERVAL seconds..."
@@ -50,10 +53,22 @@ while true; do
         # Link status
         STATUS=$(cat /sys/class/net/$IFACE/operstate 2>/dev/null || echo "unknown")
 
-        # Interface speed
-        SPEED=$(cat /sys/class/net/$IFACE/speed 2>/dev/null || echo "N/A")
+        # Detect connection type & get speed
+        if [ -d "/sys/class/net/$IFACE/wireless" ] && [ "$IWCONFIG_AVAILABLE" -eq 1 ]; then
+            # Wi-Fi interface speed (Bit Rate)
+            SPEED=$(iwconfig "$IFACE" 2>/dev/null | grep -o 'Bit Rate=[0-9.]* Mb/s' | awk -F'=' '{print $2}' | awk '{print $1}')
+        else
+            # Wired interface speed (via /sys or ethtool)
+            SPEED=$(cat /sys/class/net/$IFACE/speed 2>/dev/null)
+            if [ -z "$SPEED" ] || [ "$SPEED" = "N/A" ] && [ "$ETHTOOL_AVAILABLE" -eq 1 ]; then
+                SPEED=$(ethtool "$IFACE" 2>/dev/null | awk -F': ' '/Speed:/ {print $2}' | grep -o '[0-9]\+')
+            fi
+        fi
 
-        # MTU (Maximum Transmission Unit)
+        # Fallback for unknown speed
+        [ -z "$SPEED" ] && SPEED="N/A"
+
+        # MTU
         MTU=$(ip link show "$IFACE" | awk '/mtu/ {print $5}')
 
         # RX/TX packets
@@ -61,9 +76,9 @@ while true; do
         TX=$(cat /sys/class/net/$IFACE/statistics/tx_packets 2>/dev/null || echo "0")
 
         # Print to terminal
-        echo "[$TIME] Interface: $IFACE | IP: ${IP:-N/A} | MAC: $MAC | Status: $STATUS | Speed: ${SPEED}Mbps | MTU: $MTU | RX: $RX | TX: $TX"
+        echo "[$TIME] Interface: $IFACE | IP: ${IP:-N/A} | MAC: $MAC | Status: $STATUS | Speed: ${SPEED} Mbps | MTU: $MTU | RX: $RX | TX: $TX"
 
-        # Append to CSV log
+        # Append to CSV
         echo "\"$DATE\",\"$TIME\",\"$IFACE\",\"${IP:-N/A}\",\"$MAC\",\"$STATUS\",\"$SPEED\",\"$MTU\",\"$RX\",\"$TX\"" >> "$LOG_FILE"
     done
 
