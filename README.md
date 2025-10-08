@@ -112,7 +112,3 @@ network-analytics-suite/
 - Auto-retry and failure alert system for HTTP checks.  
 
 ---
-
-## License
-
-MIT License – See `LICENSE` file for details.
