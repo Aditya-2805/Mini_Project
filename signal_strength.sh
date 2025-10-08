@@ -7,6 +7,11 @@
 # Log file
 LOG_FILE="$HOME/wifi_signal_log.csv"
 
+if ! command -v iwconfig &>/dev/null; then
+    echo "Error: 'iwconfig' command not found. Please install wireless-tools."
+    exit 1
+fi
+
 # Wi-Fi interface name (auto-detect first wireless interface)
 INTERFACE=$(iwconfig 2>/dev/null | grep -o '^[a-zA-Z0-9]*' | head -1)
 
