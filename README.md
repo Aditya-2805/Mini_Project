@@ -1,54 +1,72 @@
-# Network Analytics Suite
+# 🌐 Network Analytics Suite
 
-A **modular Bash-based network analytics suite** to monitor and log various aspects of network performance on Linux systems. This suite includes:
+A modular Bash-based toolkit for comprehensive network performance monitoring on Linux systems.
 
-1. **Network Speed Test** – Measures download speed, upload speed (placeholder), and ping.  
-2. **Network Interface Info** – Logs IP address, MAC address, and link status for all interfaces.  
-3. **DNS Resolver Check** – Tests response times and availability of multiple DNS servers.  
-4. **Signal Strength Monitor** – Logs Wi-Fi signal strength and link quality.  
-5. **HTTP Availability Checker** – Tests accessibility and response time of specified websites.  
-6. **Master Script** – Executes all modules sequentially and logs their outputs to a consolidated CSV.
+![Language](https://img.shields.io/badge/Language-Bash-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 ---
 
-## Features
+## 📜 Description
 
-- Modular design: Each functionality is a separate script.  
-- Logs results in CSV format for easy analysis.  
-- Works with default Linux utilities (`ping`, `curl`, `ip`, `iwconfig`, `nslookup`).  
-- Can be run on schedule via `cron` for periodic monitoring.  
+This suite provides a collection of simple, powerful Bash scripts designed to monitor and log various aspects of your network. Whether you're a system administrator, a developer, or a power user, this toolkit helps you keep a close eye on your network's health and performance, logging everything to clean, easy-to-analyze CSV files.
 
 ---
 
-## Requirements
+## 🚀 Core Features
 
-- Linux OS  
-- Bash shell  
-- Utilities: `ping`, `curl`, `ip`, `iwconfig`, `nslookup`  
-- Optional (for detailed DNS checks): `dig` (`dnsutils` package)
-
----
-
-## Installation
-
-1. Clone this repository:
-
-```bash
-git clone https://github.com/kautik4/Network-Analytics
-cd Network-Analytics
-```
-
-2. Make all scripts executable:
-
-```bash
-chmod +x network_speed_test.sh network_interface_info.sh dns_resolver_check.sh signal_strength.sh http_availibility_checker.sh main_network_suite.sh
-```
+* **🧩 Modular Design:** Each function is a self-contained script. Use what you need.
+* **📊 CSV Logging:** Automatically logs results in CSV format for easy data analysis and visualization.
+* **🐧 Linux Native:** Built with standard Linux utilities (`ping`, `curl`, `ip`, `iwconfig`) for maximum compatibility and minimal dependencies.
+* **⏰ Cron-Ready:** Easily schedule the master script with `cron` for automated, periodic monitoring.
 
 ---
 
-## Usage
+## 🛠️ Modules Included
 
-### 1. Run individual modules:
+1.  **Network Speed Test:** Measures download speed, upload speed, and ping latency.
+2.  **Network Interface Info:** Logs IP/MAC addresses and link status for all network interfaces.
+3.  **DNS Resolver Check:** Tests the response time and availability of your DNS servers.
+4.  **Signal Strength Monitor:** Monitors Wi-Fi signal strength and link quality over time.
+5.  **HTTP Availability Checker:** Checks the status code and response time of critical websites or endpoints.
+6.  **Master Script:** A unified script to run all modules sequentially and aggregate the results.
+
+---
+
+## 💻 Requirements
+
+* **OS:** Any Linux distribution
+* **Shell:** `bash`
+* **Core Utilities:** `ping`, `curl`, `ip`, `iwconfig`, `nslookup`
+* **Optional:** `dig` (from the `dnsutils` or `bind-utils` package) for more detailed DNS checks.
+
+---
+
+## ⚙️ Installation
+
+Getting started is simple. Just clone the repository and make the scripts executable.
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/kautik4/Network-Analytics](https://github.com/kautik4/Network-Analytics)
+    cd Network-Analytics
+    ```
+
+2.  **Grant execute permissions:**
+    ```bash
+    chmod +x *.sh
+    ```
+
+---
+
+## ▶️ How to Use
+
+You can run each module individually or use the master script to run them all at once.
+
+### 1. Run Individual Modules
+
+Execute any script directly from your terminal to test a specific function.
 
 ```bash
 ./network_speed_test.sh
@@ -56,59 +74,3 @@ chmod +x network_speed_test.sh network_interface_info.sh dns_resolver_check.sh s
 ./dns_resolver_check.sh
 ./signal_strength.sh
 ./http_availibility_checker.sh
-```
-
-### 2. Run the master script:
-
-```bash
-./main_network_suite.sh
-```
-
-- Logs will be stored in your home directory:  
-  - `network_speed_log.csv`  
-  - `network_interface_log.csv`  
-  - `dns_resolver_log.csv`  
-  - `signal_strength_log.csv`  
-  - `http_availability_log.csv`  
-  - `network_analytics_master_log.csv` (combined log)
-
----
-
-## Directory Structure
-
-```
-network-analytics-suite/
-├── network_speed_test.sh
-├── network_interface_info.sh
-├── dns_resolver_check.sh
-├── signal_strength.sh
-├── http_availibility_checker.sh
-├── main_network_suite.sh
-└── README.md
-```
-
----
-
-## Example Output
-
-**Master Log (`network_analytics_master_log.csv`):**
-
-| Date       | Time     | Module                    | Details                                                               |
-|------------|----------|---------------------------|------------------------------------------------------------------------|
-| 2025-10-06 | 16:30:00 | Network Speed Test         | Download: 42 Mbps, Upload: 0 Mbps, Ping: 10 ms                        |
-| 2025-10-06 | 16:30:10 | Network Interface Info     | eth0: IP 192.168.1.5, MAC xx:xx:xx, up; wlan0: IP 192.168.1.10, up    |
-| 2025-10-06 | 16:30:20 | DNS Resolver Check         | 8.8.8.8: 15 ms, Success; 1.1.1.1: 12 ms, Success                      |
-| 2025-10-06 | 16:30:30 | Signal Strength Monitor    | wlan0: Signal -55 dBm, Quality 90%                                    |
-| 2025-10-06 | 16:30:40 | HTTP Availability Checker  | https://google.com: 200 OK, 35 ms; https://github.com: 200 OK, 42 ms  |
-
----
-
-## Future Improvements
-
-- Implement upload speed testing.  
-- Add packet loss and jitter monitoring.  
-- Email or Slack notifications for network anomalies.  
-- Advanced signal noise ratio (SNR) analytics.  
-- Auto-retry and failure alert system for HTTP checks.  
-
----
